@@ -26,6 +26,9 @@ func TestNextToken(t *testing.T) {
 
 	10 == 10;
 	10 != 9;
+	10 <= 12;
+	10 >= 8;
+
 	`
 
 	tests := []struct {
@@ -104,23 +107,35 @@ func TestNextToken(t *testing.T) {
 		{expectedType: token.SEMICOLON, expectedLiteral: ";"},
 		{expectedType: token.RBRACE, expectedLiteral: "}"},
 
+		{expectedType: token.INT, expectedLiteral: "10"},
+		{expectedType: token.EQ, expectedLiteral: "=="},
+		{expectedType: token.INT, expectedLiteral: "10"},
+		{expectedType: token.SEMICOLON, expectedLiteral: ";"},
+		{expectedType: token.INT, expectedLiteral: "10"},
+		{expectedType: token.NOT_EQ, expectedLiteral: "!="},
+		{expectedType: token.INT, expectedLiteral: "9"},
+		{expectedType: token.SEMICOLON, expectedLiteral: ";"},
+
+		{expectedType: token.INT, expectedLiteral: "10"},
+		{expectedType: token.LE, expectedLiteral: "<="},
+		{expectedType: token.INT, expectedLiteral: "12"},
+		{expectedType: token.SEMICOLON, expectedLiteral: ";"},
+		{expectedType: token.INT, expectedLiteral: "10"},
+		{expectedType: token.GE, expectedLiteral: ">="},
+		{expectedType: token.INT, expectedLiteral: "8"},
+		{expectedType: token.SEMICOLON, expectedLiteral: ";"},
+
 		{expectedType: token.EOF, expectedLiteral: ""},
 	}
-
-	// if (5 < 10) {
-	// 	return true;
-	// }else{
-	// 	return false;
-	// }
 
 	l := New(input)
 	for i, tt := range tests {
 		tok := l.NextToken()
 		if tok.Type != tt.expectedType {
-			t.Fatalf("tests[%d] - tokentype wrong. expected=%q. got=%q", i, tok.Type, tt.expectedType)
+			t.Fatalf("tests[%d] - tokentype wrong. expected=%q. got=%q", i, tt.expectedType, tok.Type)
 		}
 		if tok.Literal != tt.expectedLiteral {
-			t.Fatalf("tests[%d] - tokentype wrong. expected=%q. got=%q", i, tok.Literal, tt.expectedLiteral)
+			t.Fatalf("tests[%d] - literal wrong. expected=%q. got=%q", i, tt.expectedLiteral, tok.Literal)
 		}
 	}
 }

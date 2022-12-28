@@ -1,6 +1,8 @@
 package lexar
 
-import "github.com/kfess/go_interpreter/token"
+import (
+	"github.com/kfess/go_interpreter/token"
+)
 
 type Lexar struct {
 	input        string // input string
@@ -77,33 +79,61 @@ func (l *Lexar) NextToken() token.Token {
 
 	switch l.ch {
 	case '=':
-		tok = NewToken(token.ASSIGN, '=')
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			literal := string(ch) + string(l.ch)
+			tok = token.Token{Type: token.EQ, Literal: literal}
+		} else {
+			tok = NewToken(token.ASSIGN, l.ch)
+		}
 	case ';':
-		tok = NewToken(token.SEMICOLON, ';')
+		tok = NewToken(token.SEMICOLON, l.ch)
 	case '(':
-		tok = NewToken(token.LPAREN, '(')
+		tok = NewToken(token.LPAREN, l.ch)
 	case ')':
-		tok = NewToken(token.RPAREN, ')')
+		tok = NewToken(token.RPAREN, l.ch)
 	case ',':
-		tok = NewToken(token.COMMA, ',')
+		tok = NewToken(token.COMMA, l.ch)
 	case '+':
-		tok = NewToken(token.PLUS, '+')
+		tok = NewToken(token.PLUS, l.ch)
 	case '-':
-		tok = NewToken(token.MINUS, '-')
+		tok = NewToken(token.MINUS, l.ch)
 	case '!':
-		tok = NewToken(token.BANG, '!')
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			literal := string(ch) + string(l.ch)
+			tok = token.Token{Type: token.NOT_EQ, Literal: literal}
+		} else {
+			tok = NewToken(token.BANG, l.ch)
+		}
 	case '/':
-		tok = NewToken(token.SLASH, '/')
+		tok = NewToken(token.SLASH, l.ch)
 	case '*':
-		tok = NewToken(token.ASTERISK, '*')
+		tok = NewToken(token.ASTERISK, l.ch)
 	case '<':
-		tok = NewToken(token.LT, '<')
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			literal := string(ch) + string(l.ch)
+			tok = token.Token{Type: token.LE, Literal: literal}
+		} else {
+			tok = NewToken(token.LT, l.ch)
+		}
 	case '>':
-		tok = NewToken(token.GT, '>')
+		if l.peekChar() == '=' {
+			ch := l.ch
+			l.readChar()
+			literal := string(ch) + string(l.ch)
+			tok = token.Token{Type: token.GE, Literal: literal}
+		} else {
+			tok = NewToken(token.GT, l.ch)
+		}
 	case '{':
-		tok = NewToken(token.LBRACE, '{')
+		tok = NewToken(token.LBRACE, l.ch)
 	case '}':
-		tok = NewToken(token.RBRACE, '}')
+		tok = NewToken(token.RBRACE, l.ch)
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
