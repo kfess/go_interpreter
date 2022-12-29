@@ -8,11 +8,18 @@ import (
 	"github.com/kfess/go_interpreter/token"
 )
 
+type (
+	prefixParseFn func() ast.Expression
+	infixParseFn  func(ast.Expression) ast.Expression
+)
+
 type Parser struct {
-	l         *lexar.Lexar
-	curToken  token.Token
-	peekToken token.Token
-	errors    []string
+	l              *lexar.Lexar
+	curToken       token.Token
+	peekToken      token.Token
+	errors         []string
+	prefixParseFns map[token.TokenType]prefixParseFn
+	infixParseFns  map[token.TokenType]infixParseFn
 }
 
 func New(l *lexar.Lexar) *Parser {
@@ -22,6 +29,14 @@ func New(l *lexar.Lexar) *Parser {
 	p.nextToken()
 	p.nextToken()
 	return p
+}
+
+func (p *Parser) registerPrefixParseFn(tokenType token.TokenType, fn prefixParseFn) {
+	p.prefixParseFns[tokenType] = fn
+}
+
+func (p *Parser) registerInfixParseFn(tokenType token.TokenType, fn infixParseFn) {
+	p.infixParseFns[tokenType] = fn
 }
 
 func (p *Parser) Errors() []string {

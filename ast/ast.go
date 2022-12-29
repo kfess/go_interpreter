@@ -76,7 +76,7 @@ func (ls *LetStatement) String() string {
 	return out.String()
 }
 
-// /   v
+// /   v   vv
 // let x = 10
 type Identifier struct {
 	Token token.Token // token.IDENT トークン
